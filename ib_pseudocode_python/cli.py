@@ -160,7 +160,7 @@ def cli(ctx, *args, **kwargs):
 
 
 @cli.command('transpile')
-@add_option('-p', '--path', default=None)
+@add_option('-p', '--path', required=True)
 @pass_pseudo
 def transpile(app, path):
     """

@@ -35,7 +35,7 @@ class List:
         return len(self._list)
 
     def __repr__(self):
-        return repr(self._list[:self._upperboundary])
+        return repr(self._list[:self._upperboundary+1])
 
 
 class Collection:
@@ -91,3 +91,11 @@ class Collection:
         for _ in range(how_many):
             me.addItem(random.randint(min, max))
         return me
+
+
+class Stack(list):
+    def push(self, item):
+        self.append(item)
+
+    def pop(self):
+        return super().pop()
