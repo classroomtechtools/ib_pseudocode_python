@@ -89,14 +89,21 @@ class Transpiler:
         }.get(operator)
         return f"while {operand1} {inverse_operator} {operand2}:"
 
-    def transpile(self, path: str = None, prepend_spec_code=True) -> str:
+    def transpile(self, path: str = None, prepend_spec_code=True, announce=False) -> str:
         """
 
         """
+        if path is None:
+            path = pathlib.Path().cwd()
+
 
         with open(path) as source:
             # readin from source
             code = source.read()
+
+            if announce:
+                # output bold
+                code = 'output "\033[1m' + '='*5 + pathlib.Path(path).name + '='*5 + '\033[0m"\n' + code
 
             # replace comments: TODO What if "//"" in string?
             code = code.replace('//', "#")
@@ -187,6 +194,6 @@ def run(app, directory):
     paths = list([str(e) for e in enclosing.glob("*.pseudo")])
     paths.sort()
 
-    code = [app.obj.transpile(c, prepend_spec_code=i == 0) for i, c in enumerate(paths)]
+    code = [app.obj.transpile(c, announce=True, prepend_spec_code=i == 0) for i, c in enumerate(paths)]
 
     app.obj.execute("\n".join(code))
