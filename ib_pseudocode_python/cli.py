@@ -12,7 +12,7 @@ make_command = click.command
 add_argument = click.argument
 add_option = click.option
 add_argument = click.argument
-pass_transpiler = click.pass_context
+pass_pseudo = click.pass_context
 
 
 class Screen:
@@ -87,7 +87,7 @@ class Transpiler:
         }.get(operator)
         return f"while {operand1} {inverse_operator} {operand2}:"
 
-    def transpile(self, path: str = None) -> str:
+    def transpile(self, path: str = None, prepend_spec_code=True) -> str:
         """
 
         """
@@ -133,57 +133,58 @@ class Transpiler:
             code = re.sub(r'\bmod\b', '%', code)
             code = re.sub(r'\bdiv\b', '/', code)
 
-            with open(ib_specification_glue_code.__file__) as ib:
-                CODE = "".join(ib.readlines())
-            code = CODE + '\n' + code
+            if prepend_spec_code:
+                with open(ib_specification_glue_code.__file__) as ib:
+                    code = "".join(ib.readlines()) + '\n' + code
 
         return code
 
     def execute(self, the_string, **kwargs):
-        exec(the_string)
+        exec(the_string, globals())
 
 
 @form_group()
 @add_option('-v', '--verbose', default=0, count=True, help="Help to debug your program, add more for more output")
-@pass_transpiler
+@pass_pseudo
 def cli(ctx, *args, **kwargs):
     ctx.obj = Transpiler(*args, **kwargs)
 
 
 @cli.command('transpile')
 @add_option('-p', '--path', default=None)
-@pass_transpiler
-def transpile(transpiler, path):
+@pass_pseudo
+def transpile(app, path):
     """
     Outputs Python code from pseudocode at path
     """
-    return transpiler.obj.transpile(path)
+    app.obj.screen.output_to_screen(app.obj.transpile(path))
 
 
 @cli.command('execute')
 @add_option('-p', '--path', default=None)
-@pass_transpiler
-def execute(transpiler, *args, **kwargs):
+@pass_pseudo
+def execute(app, *args, **kwargs):
     """
     Executes Python code from pseudocode at path
     """
-    code = transpiler.obj.transpile(*args, **kwargs)
-    transpiler.obj.execute(code)
+    code = app.obj.transpile(*args, **kwargs)
+    app.obj.execute(code)
 
 
 @cli.command('run')
 @add_option('-d', '--directory', default=None)
-@pass_transpiler
-def run(transpiler, directory):
+@pass_pseudo
+def run(app, directory):
     """
-    Read in all .pseudo files inside dir, transpile and execute
+    Read in all .pseudo files inside dir, joins them up, transpiles and executes
     """
     if directory is None:
         directory = os.getcwd()
 
     enclosing = pathlib.Path(directory)
-    for pseudocode in enclosing.glob("*.pseudo"):
-        transpiler.invoke(
-            execute,
-            path=pseudocode
-        )
+    paths = list([str(e) for e in enclosing.glob("*.pseudo")])
+    paths.sort()
+
+    code = [app.obj.transpile(c, prepend_spec_code=i == 0) for i, c in enumerate(paths)]
+
+    app.obj.execute("\n".join(code))
