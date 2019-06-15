@@ -18,25 +18,28 @@ class List:
     to the list at any indice (whereas Python requires you to append)
     LIST[0] = 'first item'  # Pseudocode: legal syntax
                             # Python: IndexError
+    We compensate by extending the list as it grows
     """
 
     def __init__(self, max=1000):
-        self._list = [None] * max
-        self._upperboundary = 0
+        self._list = []
+        self._upperboundary = -1
 
     def __getitem__(self, index):
         return self._list[index]
 
     def __setitem__(self, index, value):
         if index > self._upperboundary:
+            # create as many None items as we need to do the assignment
             self._upperboundary = index
+            self._list.extend( [None] * (index+1 - len(self._list)) )
         self._list[index] = value
 
     def __len__(self):
         return len(self._list)
 
     def __repr__(self):
-        return repr(self._list[:self._upperboundary+1])
+        return repr(self._list)
 
 
 class Collection:
