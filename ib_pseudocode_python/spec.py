@@ -4,6 +4,7 @@ https://computersciencewiki.org/images/c/c6/IB-Pseudocode-rules.pdf
 """
 
 import random
+import collections
 
 
 def output(*args):
@@ -97,5 +98,17 @@ class Stack(list):
     def push(self, item):
         self.append(item)
 
-    def pop(self):
-        return super().pop()
+
+class Queue(collections.deque):
+    def enqueue(self, item):
+        self.append(item)
+
+    def dequeue(self):
+        return self.popleft()
+
+    def isEmpty(self):
+        return len(self) == 0
+
+    @classmethod
+    def from_array(cls, array):
+        return cls(array)

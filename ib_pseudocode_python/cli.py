@@ -129,8 +129,11 @@ class Transpiler:
             # change "loop while" to just "while"
             code = re.sub(r'\bloop while (.*)', r"while \1:", code)
 
-            # change "loop while" to "while <inverse comparison>"
+            # change "loop until" to "while <inverse comparison>"
             code = re.sub(r'\bloop until (.*) ([=><]{1,2}) (.*)', self.inverse_while, code)
+
+            # change loop until <expr>
+            code = re.sub(r'\bloop until (.*)', r'while not \1:', code)
 
             # Python's range second param in non-inclusive, but IB spec is inclusive, so need extra handling here (hence the func)
             code = re.sub("loop ([A-Z]+) from ([0-9]+) to ([A-Z0-9-]+)", self.increment_second_range_param, code)
