@@ -3,8 +3,10 @@
 """
 import re
 import os
+import random  # for exec function
 import pathlib
 import click
+
 from ib_pseudocode_python import spec as ib_specification_glue_code
 
 form_group = click.group
