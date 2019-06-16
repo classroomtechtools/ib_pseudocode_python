@@ -61,10 +61,9 @@ class Transpiler:
 
     """
 
-    def __init__(self, verbose):
+    def __init__(self):
         """
         """
-        self.verbose = verbose
         self.screen = Screen()
 
     @staticmethod
@@ -166,7 +165,6 @@ class Transpiler:
 
 
 @form_group()
-@add_option('-v', '--verbose', default=0, count=True, help="Help to debug your program, add more for more output")
 @pass_pseudo
 def cli(ctx, *args, **kwargs):
     ctx.obj = Transpiler(*args, **kwargs)
