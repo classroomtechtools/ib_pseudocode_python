@@ -170,6 +170,11 @@ class CliSort(click.Group):
         # only these ones
         return ['transpile', 'execute', 'run']
 
+    def collect_usage_pieces(self, ctx):
+        #from IPython import embed;embed()
+
+        return ['\b' * len('pseudo  '), "cli('<command>')"]
+
 
 @form_group(cls=CliSort)
 @pass_pseudo
