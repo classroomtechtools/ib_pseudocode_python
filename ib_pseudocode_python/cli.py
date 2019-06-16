@@ -179,11 +179,12 @@ class CliGroupRepl(CliGroup):
 
     def collect_usage_pieces(self, ctx):
         #from IPython import embed;embed()
-
-        return ['\b' * len('pseudo  '), "cli('<command> <parameters>')"]
+        more = super().collect_usage_pieces(ctx)
+        return ['\b' * len('pseudo  '), "cli('pseudo"] + more + ["')"]
 
 
 on_repl = pathlib.Path('/home/runner/.local/').exists()
+
 
 @form_group(cls=CliGroupRepl if on_repl else CliGroup)
 @pass_pseudo
@@ -191,7 +192,14 @@ def cli(app, *args, **kwargs):
     app.obj = Transpiler(*args, **kwargs)
 
 
-@cli.command('interface', hidden=True)
+class CliCommandRepl(click.Command):
+
+    def collect_usage_pieces(self, ctx):
+        more = super().collect_usage_pieces(ctx)
+        return ['\b' * (len('psuedo  ') + len(ctx.command.name + ' ')), "cli('pseudo " + ctx.command.name] + more + ["')"]
+
+
+@cli.command('interface', cls=CliCommandRepl if on_repl else None, hidden=True)
 @pass_pseudo
 def interface(app):
     res = {}
@@ -208,7 +216,7 @@ def interface(app):
     print(res)  # plainly print it for parsing : BLECHT
 
 
-@cli.command('transpile')
+@cli.command('transpile', cls=CliCommandRepl if on_repl else None)
 @add_argument('file')
 @pass_pseudo
 def transpile(app, file):
@@ -218,7 +226,7 @@ def transpile(app, file):
     app.obj.screen.output_to_screen(app.obj.transpile(file))
 
 
-@cli.command('execute')
+@cli.command('execute', cls=CliCommandRepl if on_repl else None)
 @add_argument('file', default=None)
 @pass_pseudo
 def execute(app, *args, **kwargs):
@@ -229,7 +237,7 @@ def execute(app, *args, **kwargs):
     app.obj.execute(code)
 
 
-@cli.command('run')
+@cli.command('run', cls=CliCommandRepl if on_repl else None)
 @add_option('-d', '--directory', default=None)
 @pass_pseudo
 def run(app, directory):
