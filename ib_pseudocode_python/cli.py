@@ -88,13 +88,14 @@ class Transpiler:
         }.get(operator)
         return f"while {operand1} {inverse_operator} {operand2}:"
 
-    def transpile(self, path: str = None, prepend_spec_code=False, announce=False) -> str:
+    def transpile(self, path, prepend_spec_code=False, announce=False) -> str:
         """
 
         """
-        if path is None:
-            path = pathlib.Path().cwd()
+        path = pathlib.Path(path)
 
+        if not path.exists():
+            path = path.with_suffix('.pseudo')
 
         with open(path) as source:
             # readin from source
@@ -164,19 +165,24 @@ class Transpiler:
         exec(the_string, hand_off_globals)
 
 
-class CliSort(click.Group):
+class CliGroup(click.Group):
 
     def list_commands(self, _):
         # only these ones
         return ['transpile', 'execute', 'run']
 
+
+class CliGroupRepl(CliGroup):
+
     def collect_usage_pieces(self, ctx):
         #from IPython import embed;embed()
 
-        return ['\b' * len('pseudo  '), "cli('<command>')"]
+        return ['\b' * len('pseudo  '), "cli('<command> <parameters>')"]
 
 
-@form_group(cls=CliSort)
+on_repl = pathlib.Path('/home/runner/.local/').exists()
+
+@form_group(cls=CliGroupRepl if on_repl else CliGroup)
 @pass_pseudo
 def cli(app, *args, **kwargs):
     app.obj = Transpiler(*args, **kwargs)
@@ -200,21 +206,21 @@ def interface(app):
 
 
 @cli.command('transpile')
-@add_option('-p', '--path', required=True)
+@add_argument('file')
 @pass_pseudo
-def transpile(app, path):
+def transpile(app, file):
     """
-    Convert pseudocode at path and output
+    Convert pseudocode in file and output
     """
-    app.obj.screen.output_to_screen(app.obj.transpile(path))
+    app.obj.screen.output_to_screen(app.obj.transpile(file))
 
 
 @cli.command('execute')
-@add_option('-p', '--path', default=None)
+@add_option('-f', '--file', default=None)
 @pass_pseudo
 def execute(app, *args, **kwargs):
     """
-    Executes Python code from pseudocode at path
+    Executes Python code from pseudocode in file
     """
     code = app.obj.transpile(*args, **kwargs)
     app.obj.execute(code)
