@@ -3,7 +3,6 @@
 """
 import re
 import os
-import random  # for exec function
 import pathlib
 import click
 
@@ -90,7 +89,7 @@ class Transpiler:
         }.get(operator)
         return f"while {operand1} {inverse_operator} {operand2}:"
 
-    def transpile(self, path: str = None, prepend_spec_code=True, announce=False) -> str:
+    def transpile(self, path: str = None, prepend_spec_code=False, announce=False) -> str:
         """
 
         """
@@ -105,6 +104,9 @@ class Transpiler:
             if announce:
                 # output bold
                 code = 'output "\033[1m' + '='*5 + pathlib.Path(path).name + '='*5 + '\033[0m"\n' + code
+
+            # change tabs to four spaces
+            code = re.sub(r'\t', "    ", code)
 
             # remove comments: TODO What if "//"" in string?
             code = re.sub('//.*', "", code)
@@ -147,12 +149,20 @@ class Transpiler:
             code = re.sub(r'\bdiv\b', '/', code)
 
             if prepend_spec_code:
+                # In case you want to manually add to top of file
                 with open(ib_specification_glue_code.__file__) as ib:
                     code = ib.read() + '\n' + code
         return code
 
     def execute(self, the_string, **kwargs):
-        exec(the_string, globals())
+        hand_off_globals = {
+            'List': ib_specification_glue_code.List,
+            'Stack': ib_specification_glue_code.Stack,
+            'Collection': ib_specification_glue_code.Collection,
+            'output': ib_specification_glue_code.output,
+            'Queue': ib_specification_glue_code.Queue,
+        }
+        exec(the_string, hand_off_globals)
 
 
 @form_group()
