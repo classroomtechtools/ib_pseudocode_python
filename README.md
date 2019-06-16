@@ -7,6 +7,7 @@ Write pseudocode in repl.it. Execute it as Python. Learn Paper 1, learn computat
 ### Executing code
 
 - Navigate to the [base repl](https://repl.it/@adammorris/InputPseudocode).
+- Run by clicking the play button
 - Create a new file called "new" (this will also fork the repl and make it yours)
 - Enter pseudocode (for example `output "Hello World"`)
 - In the interpreter, enter `execute('new')` and the code in the file `new.pseudo` executes
