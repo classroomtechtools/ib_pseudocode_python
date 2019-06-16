@@ -180,7 +180,17 @@ def cli(app, *args, **kwargs):
 @cli.command('interface', hidden=True)
 @pass_pseudo
 def interface(app):
-    res = {c: cli.get_command(app, c).help for c in cli.list_commands(app)}
+    res = {}
+    for command_name in cli.list_commands(app):
+        cmd = cli.get_command(app, command_name)
+        obj = {'help': cmd.help}
+        obj['params'] = []
+        for param in cmd.params:
+            if type(param) == click.core.Option and param.required:
+                obj['params'].append( (param.name, param.help) )
+            elif type(param) == click.core.Command:
+                obj['params'].append( (param.name, param.help) )
+        res[command_name] = obj
     print(res)  # plainly print it for parsing : BLECHT
 
 
