@@ -88,14 +88,17 @@ class Transpiler:
         }.get(operator)
         return f"while {operand1} {inverse_operator} {operand2}:"
 
-    def transpile(self, path, prepend_spec_code=False, announce=False) -> str:
+    def transpile(self, file, prepend_spec_code=False, announce=False) -> str:
         """
 
         """
-        path = pathlib.Path(path)
+        path = pathlib.Path(file)
 
         if not path.exists():
             path = path.with_suffix('.pseudo')
+
+        if not path.exists():
+            raise FileNotFoundError(f"You need to create a file called {path}")
 
         with open(path) as source:
             # readin from source
@@ -216,7 +219,7 @@ def transpile(app, file):
 
 
 @cli.command('execute')
-@add_option('-f', '--file', default=None)
+@add_argument('file', default=None)
 @pass_pseudo
 def execute(app, *args, **kwargs):
     """
