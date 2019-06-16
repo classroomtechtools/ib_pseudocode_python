@@ -23,16 +23,20 @@ class List:
 
     def __init__(self):
         self._list = []
-        self._upperboundary = -1
 
     def __getitem__(self, index):
         return self._list[index]
 
     def __setitem__(self, index, value):
-        if index > self._upperboundary:
-            # create as many None items as we need to do the assignment
-            self._upperboundary = index
-            self._list.extend( [None] * (index+1 - len(self._list)) )
+        diff = index - len(self._list)
+        if diff == 0:
+            # trying to set item at end of list, just append
+            self._list.append(value)
+        elif diff > 0:
+            # trying to set item at index further than end of list, create items
+            self._list.extend( [None] * (diff + 1) )
+        else:
+            pass  # nothing needed
         self._list[index] = value
 
     def __len__(self):
@@ -98,8 +102,20 @@ class Collection:
 
 
 class Stack(list):
+    """ Stacks are just lists with special methods """
     def push(self, item):
         self.append(item)
+
+    def pop(self):
+        """ call super with no arguments """
+        return super().pop()
+
+    def isEmpty(self):
+        return len(self) == 0
+
+    @classmethod
+    def from_array(cls, arr):
+        return cls(arr)
 
 
 class Queue(collections.deque):

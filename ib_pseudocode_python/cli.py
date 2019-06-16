@@ -85,7 +85,8 @@ class Transpiler:
             '>=': '<',
             '=': '!=',
             '==': '!=',
-            '!=': '=='
+            '!=': '==',
+            '≠': '=='
         }.get(operator)
         return f"while {operand1} {inverse_operator} {operand2}:"
 
@@ -105,8 +106,8 @@ class Transpiler:
                 # output bold
                 code = 'output "\033[1m' + '='*5 + pathlib.Path(path).name + '='*5 + '\033[0m"\n' + code
 
-            # replace comments: TODO What if "//"" in string?
-            code = code.replace('//', "#")
+            # remove comments: TODO What if "//"" in string?
+            code = re.sub('//.*', "", code)
 
             # change output keyword to output function (which is exec as print statement)
             code = re.sub(r"\boutput (.*)", r"output(\1)", code)
@@ -139,7 +140,7 @@ class Transpiler:
             code = re.sub("loop ([A-Z]+) from ([0-9]+) to ([A-Z0-9-]+)", self.increment_second_range_param, code)
 
             # standardize cases; TODO: What if user enters falSe?
-            code = re.sub(r"\bNOT\b", "not", code)
+            code = re.sub(r"\b((NOT)|(AND)|(OR))\b", lambda m: m.group(1).lower(), code)
             code = re.sub(r'\bfalse\b', 'False', code)
             code = re.sub(r'\btrue\b', 'True', code)
             code = re.sub(r'\bmod\b', '%', code)
@@ -147,8 +148,7 @@ class Transpiler:
 
             if prepend_spec_code:
                 with open(ib_specification_glue_code.__file__) as ib:
-                    code = "".join(ib.readlines()) + '\n' + code
-
+                    code = ib.read() + '\n' + code
         return code
 
     def execute(self, the_string, **kwargs):
