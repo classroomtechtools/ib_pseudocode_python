@@ -164,10 +164,24 @@ class Transpiler:
         exec(the_string, hand_off_globals)
 
 
-@form_group()
+class CliSort(click.Group):
+
+    def list_commands(self, _):
+        # only these ones
+        return ['transpile', 'execute', 'run']
+
+
+@form_group(cls=CliSort)
 @pass_pseudo
-def cli(ctx, *args, **kwargs):
-    ctx.obj = Transpiler(*args, **kwargs)
+def cli(app, *args, **kwargs):
+    app.obj = Transpiler(*args, **kwargs)
+
+
+@cli.command('interface', hidden=True)
+@pass_pseudo
+def interface(app):
+    res = {c: cli.get_command(app, c).help for c in cli.list_commands(app)}
+    print(res)  # plainly print it for parsing : BLECHT
 
 
 @cli.command('transpile')
@@ -175,7 +189,7 @@ def cli(ctx, *args, **kwargs):
 @pass_pseudo
 def transpile(app, path):
     """
-    Outputs Python code from pseudocode at path
+    Convert pseudocode at path and output
     """
     app.obj.screen.output_to_screen(app.obj.transpile(path))
 
@@ -196,7 +210,7 @@ def execute(app, *args, **kwargs):
 @pass_pseudo
 def run(app, directory):
     """
-    Read in all .pseudo files inside dir, joins them up, transpiles and executes
+    Concatenates in all .pseudo files, executes all
     """
     if directory is None:
         directory = os.getcwd()
