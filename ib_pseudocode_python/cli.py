@@ -15,6 +15,8 @@ add_option = click.option
 add_argument = click.argument
 pass_pseudo = click.pass_context
 
+on_repl = pathlib.Path('/home/runner/.local/').exists()
+
 
 class Screen:
     output_to_screen = staticmethod(click.echo)
@@ -181,9 +183,6 @@ class CliGroupRepl(CliGroup):
         #from IPython import embed;embed()
         more = super().collect_usage_pieces(ctx)
         return ['\b' * len('pseudo  '), "cli('pseudo"] + more + ["')"]
-
-
-on_repl = pathlib.Path('/home/runner/.local/').exists()
 
 
 @form_group(cls=CliGroupRepl if on_repl else CliGroup)
