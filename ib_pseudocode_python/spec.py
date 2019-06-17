@@ -12,6 +12,28 @@ def output(*args):
     print("".join([str(a) for a in args]))
 
 
+class DataAssist:
+    def from_file(self, name, obj, attr, convert_ints=True, convert_floats=True):
+        func = getattr(obj, attr)
+        with open(name) as f:
+            for line in [l.strip() for l in f.readlines()]:
+                if convert_ints and line.isdigit():
+                    func(int(line))
+                elif convert_floats and line.count('.') == 1 and line.replace('.', '').isdigit():
+                    func(float(line))
+                else:
+                    func(line)
+        return obj
+
+    def from_x_integers(self, obj, attr, num, min=1, max=1000):
+        func = getattr(obj, attr)
+        for _ in range(num):
+            func(random.randint(min, max))
+        return obj
+
+data_assist = DataAssist()
+
+
 class List:
     """
     IB Pseudocode list class seems to be the same as Python list, except you can add items
@@ -45,11 +67,26 @@ class List:
     def __repr__(self):
         return repr(self._list)
 
+    @classmethod
+    def from_file(cls, name):
+        me = cls()
+        me._list = data_assist.from_file(name, me._list, 'append')
+        return me
+
+    @classmethod
+    def from_x_integers(cls, how_many, min=1, max=1000):
+        me = cls()
+        me._list = data_assist.from_x_integers(me._list, 'append', how_many, min=min, max=max)
+        return me
+
+    def __repr__(self):
+        return "List(" + repr(self._list) + ")"
+
 
 class Collection:
 
-    def __init__(self, arr=[]):
-        self._list = arr
+    def __init__(self, arr=None):
+        self._list = arr or []
         self.resetNext()
 
     def hasNext(self):
@@ -72,33 +109,21 @@ class Collection:
         return self._list[index]
 
     @classmethod
-    def from_file(cls, path):
-        ret = None
-        with open(path) as file:
-            ret = cls.from_array([l.strip() for l in file if l.strip()])
-        return ret
-
-    @classmethod
     def from_array(cls, arr):
         return cls(arr)
 
     @classmethod
     def from_file(cls, name):
         me = cls()
-        with open(name) as f:
-            for line in [l.strip() for l in f.readlines()]:
-                if line.isdigit():
-                    me.addItem(int(line))
-                else:
-                    me.addItem(line)
-        return me
+        return data_assist.from_file(name, me, 'addItem')
 
     @classmethod
     def from_x_integers(cls, how_many, min=1, max=1000):
         me = cls()
-        for _ in range(how_many):
-            me.addItem(random.randint(min, max))
-        return me
+        return data_assist.from_x_integers(me, 'addItem', how_many, min=min, max=max)
+
+    def __repr__(self):
+        return "Collection(" + repr(self._list) + ")"
 
 
 class Stack(list):
@@ -117,6 +142,19 @@ class Stack(list):
     def from_array(cls, arr):
         return cls(arr)
 
+    @classmethod
+    def from_file(cls, name):
+        me = cls()
+        return data_assist.from_file(name, me, 'push')
+
+    @classmethod
+    def from_x_integers(cls, how_many, min=1, max=1000):
+        me = cls()
+        return data_assist.from_x_integers(me, 'push', how_many, min=min, max=max)
+
+    def __repr__(self):
+        return "Stack(" + super().__repr__() + ")"
+
 
 class Queue(collections.deque):
     def enqueue(self, item):
@@ -131,3 +169,13 @@ class Queue(collections.deque):
     @classmethod
     def from_array(cls, array):
         return cls(array)
+
+    @classmethod
+    def from_file(cls, name):
+        me = cls()
+        return data_assist.from_file(name, me, 'enqueue')
+
+    @classmethod
+    def from_x_integers(cls, how_many, min=1, max=1000):
+        me = cls()
+        return data_assist.from_x_integers(me, 'enqueue', how_many, min=min, max=max)
