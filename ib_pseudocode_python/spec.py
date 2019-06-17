@@ -68,6 +68,12 @@ class List:
         return repr(self._list)
 
     @classmethod
+    def from_array(cls, arr):
+        me = cls()
+        me._list = arr
+        return me
+
+    @classmethod
     def from_file(cls, name):
         me = cls()
         me._list = data_assist.from_file(name, me._list, 'append')
@@ -110,7 +116,7 @@ class Collection:
 
     @classmethod
     def from_array(cls, arr):
-        return cls(arr)
+        return cls(arr=arr)
 
     @classmethod
     def from_file(cls, name):
