@@ -161,7 +161,7 @@ class Transpiler:
 
     def execute(self, the_string, **kwargs):
         hand_off_globals = {
-            'List': ib_specification_glue_code.List,
+            'Array': ib_specification_glue_code.Array,
             'Stack': ib_specification_glue_code.Stack,
             'Collection': ib_specification_glue_code.Collection,
             'output': ib_specification_glue_code.output,
