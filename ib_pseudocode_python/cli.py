@@ -69,6 +69,10 @@ class Transpiler:
         self.screen = Screen()
 
     @staticmethod
+    def if_statement(match):
+        return re.sub(r'={1}', r'==', match.group(0))
+
+    @staticmethod
     def increment_second_range_param(match):
         groups = match.groups()
         if len(groups) != 3:
@@ -120,7 +124,7 @@ class Transpiler:
             code = re.sub(r"\boutput (.*)", r"output(\1)", code)
 
             # change comparison with one = to ==, keeping "then" (removed in next)
-            code = re.sub("if (.*) +={1} +(.*) then", r"if \1 == \2 then", code)
+            code = re.sub("if (.*) ={1} (.*)", self.if_statement, code)
 
             # change "else if" to "elif"
             code = re.sub(r'\belse if (.*) then', r"elif \1:", code)
