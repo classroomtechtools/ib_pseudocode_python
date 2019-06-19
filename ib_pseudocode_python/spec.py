@@ -34,7 +34,7 @@ class DataAssist:
 data_assist = DataAssist()
 
 
-class List:
+class Array:
     """
     IB Pseudocode list class seems to be the same as Python list, except you can add items
     to the list at any indice (whereas Python requires you to append)
@@ -61,14 +61,11 @@ class List:
             pass  # nothing needed
         self._list[index] = value
 
-    def __len__(self):
-        return len(self._list)
-
     def __repr__(self):
         return repr(self._list)
 
     @classmethod
-    def from_array(cls, arr):
+    def from_list(cls, arr):
         me = cls()
         me._list = arr
         return me
@@ -115,7 +112,7 @@ class Collection:
         return self._list[index]
 
     @classmethod
-    def from_array(cls, arr):
+    def from_list(cls, arr):
         return cls(arr=arr)
 
     @classmethod
@@ -145,7 +142,7 @@ class Stack(list):
         return len(self) == 0
 
     @classmethod
-    def from_array(cls, arr):
+    def from_list(cls, arr):
         return cls(arr)
 
     @classmethod
@@ -173,7 +170,7 @@ class Queue(collections.deque):
         return len(self) == 0
 
     @classmethod
-    def from_array(cls, array):
+    def from_list(cls, array):
         return cls(array)
 
     @classmethod
