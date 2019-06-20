@@ -138,6 +138,9 @@ class Transpiler:
             # just remove any "end" statements
             code = re.sub(r"\bend .*", "", code)
 
+            # change loop with single = to ==
+            code = re.sub(r'\bloop\b.*', self.if_statement, code)
+
             # change "loop while" to just "while"
             code = re.sub(r'\bloop while (.*)', r"while \1:", code)
 
@@ -146,6 +149,7 @@ class Transpiler:
 
             # change loop until <expr>
             code = re.sub(r'\bloop until (.*)', r'while not \1:', code)
+
 
             # Python's range second param in non-inclusive, but IB spec is inclusive, so need extra handling here (hence the func)
             code = re.sub("loop ([A-Z]+) from ([0-9]+) to ([A-Z0-9-]+)", self.increment_second_range_param, code)
@@ -184,7 +188,6 @@ class CliGroup(click.Group):
 class CliGroupRepl(CliGroup):
 
     def collect_usage_pieces(self, ctx):
-        #from IPython import embed;embed()
         more = super().collect_usage_pieces(ctx)
         return ['\b' * len('pseudo  '), "cli('pseudo"] + more + ["')"]
 
