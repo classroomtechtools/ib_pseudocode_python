@@ -250,7 +250,6 @@ def execute(app, *args, file=None, **kwargs):
             lines = file_.readlines()
         click.echo(click.style(f"Synatax Error in <{file_name}> on line {e.lineno}:", fg='red'))
         click.echo('\t' + click.style(lines[e.lineno-1].strip(), fg="green") + " (pseudocode)")
-        click.echo('\t' + click.style(code.split('\n')[e.lineno-1].strip(), fg="yellow") + " (python)")
     except Exception as err:
         with open(file) as file_:
             lines = file_.readlines()
