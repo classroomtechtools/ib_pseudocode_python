@@ -5,6 +5,8 @@ import re
 import os
 import pathlib
 import click
+import traceback
+import sys
 
 from ib_pseudocode_python import spec as ib_specification_glue_code
 
@@ -235,20 +237,38 @@ def transpile(app, file):
 @cli.command('execute', cls=CliCommandRepl if on_repl else None)
 @add_argument('file', default=None)
 @pass_pseudo
-def execute(app, *args, **kwargs):
+def execute(app, *args, file=None, **kwargs):
     """
     Executes Python code from pseudocode in file
     """
-    code = app.obj.transpile(*args, **kwargs)
-    app.obj.execute(code)
-
+    code = app.obj.transpile(*args, file=file, **kwargs)
+    file_name = file.split("/")[-1]
+    try:
+        app.obj.execute(code)
+    except SyntaxError as e:
+        with open(file) as file_:
+            lines = file_.readlines()
+        click.echo(click.style(f"Synatax Error in <{file_name}> on line {e.lineno}:", fg='red'))
+        click.echo('\t' + click.style(lines[e.lineno-1].strip(), fg="green") + " (pseudocode)")
+        click.echo('\t' + click.style(code.split('\n')[e.lineno-1].strip(), fg="yellow") + " (python)")
+    except Exception as err:
+        with open(file) as file_:
+            lines = file_.readlines()
+        error_class = err.__class__.__name__
+        detail = err.args[0]
+        cl, exc, tb = sys.exc_info()
+        line_number = traceback.extract_tb(tb)[-1][1]
+        click.echo(click.style(f"{error_class} in <{file_name}> on line {line_number}:", fg='red'))
+        click.echo('\t' + click.style(lines[line_number-1].strip(), fg="green") + " (pseudocode)")
+        click.echo('\t' + click.style(code.split('\n')[line_number-1].strip(), fg="yellow") + " (python)")
+        click.echo(click.style(detail, fg='red'))
 
 @cli.command('run', cls=CliCommandRepl if on_repl else None)
 @add_option('-d', '--directory', default=None)
 @pass_pseudo
 def run(app, directory):
     """
-    Concatenates in all .pseudo files, executes all
+    Executes all, one by one
     """
     if directory is None:
         directory = os.getcwd()
@@ -257,6 +277,9 @@ def run(app, directory):
     paths = list([str(e) for e in enclosing.glob("*.pseudo")])
     paths.sort()
 
-    code = [app.obj.transpile(c, announce=True, prepend_spec_code=i == 0) for i, c in enumerate(paths)]
-
-    app.obj.execute("\n".join(code))
+    for i, c in enumerate(paths):
+        click.secho("=" * 5 + c.split("/")[-1] + "="*5, fg="green")
+        app.invoke(
+            execute,
+            file=c
+        )
