@@ -5,7 +5,8 @@ https://computersciencewiki.org/images/c/c6/IB-Pseudocode-rules.pdf
 
 import random
 import collections
-
+import inspect
+import click
 
 def output(*args):
     """ Convert arguments to strings and print to stdout """
@@ -47,7 +48,11 @@ class Array:
         self._list = []
 
     def __getitem__(self, index):
-        return self._list[index]
+        try:
+            value = self._list[index]
+        except IndexError as err:
+            value = None
+        return value
 
     def __setitem__(self, index, value):
         diff = index - len(self._list)
@@ -60,9 +65,6 @@ class Array:
         else:
             pass  # nothing needed
         self._list[index] = value
-
-    def __repr__(self):
-        return repr(self._list)
 
     @classmethod
     def from_list(cls, arr):
@@ -83,7 +85,7 @@ class Array:
         return me
 
     def __repr__(self):
-        return "List(" + repr(self._list) + ")"
+        return "Array.from_list(" + repr(self._list) + ")"
 
 
 class Collection:
@@ -126,7 +128,7 @@ class Collection:
         return data_assist.from_x_integers(me, 'addItem', how_many, min=min, max=max)
 
     def __repr__(self):
-        return "Collection(" + repr(self._list) + ")"
+        return "Collection.from_list(" + repr(self._list) + ")"
 
 
 class Stack(list):
@@ -156,7 +158,7 @@ class Stack(list):
         return data_assist.from_x_integers(me, 'push', how_many, min=min, max=max)
 
     def __repr__(self):
-        return "Stack(" + super().__repr__() + ")"
+        return "Stack.from_list(" + super().__repr__() + ")"
 
 
 class Queue(collections.deque):
