@@ -187,15 +187,15 @@ class Transpiler:
                 code = ib.read() + '\n' + code
         return pseudocode, code
 
-    def execute_and_capture(self, code, pseudocode):
+    def execute_and_capture(self, code, pseudocode, **kwargs):
         """
         Execute code but capture stdout and return that
         """
         with stdoutIO() as captured:
-            error = self.execute(code, pseudocode)
+            error = self.execute(code, pseudocode, **kwargs)
         return captured.getvalue(), error
 
-    def execute(self, code, pseudocode, **kwargs):
+    def execute(self, code, pseudocode, lineoffset=0):
         """
         Executes and outputs results to stdout
         return true if error occurred and false if not
@@ -233,7 +233,7 @@ class Transpiler:
 
             self.screen.output_to_screen(
                 self.screen.stylize_string(
-                    f"Programming error on line {err.lineno}:",
+                    f"Programming error on line {err.lineno+lineoffset}:",
                     fg='red')
             )
             self.screen.output_to_screen(
@@ -268,7 +268,7 @@ class Transpiler:
             pseudo_line = pseudocode_lines[line_number-1].strip()
             transpiled_line = code_lines[line_number-1].strip()
 
-            click.echo(click.style(f"Execution error on line {line_number}:", fg='red'))
+            click.echo(click.style(f"Execution error on line {line_number+lineoffset}:", fg='red'))
             click.echo('\t' + click.style(pseudo_line, fg="green") + " (pseudocode)")
             click.echo('\t' + click.style(transpiled_line, fg="yellow") + " (python)")
             click.echo(click.style(f"{error_class}: {detail}", fg='red'))
