@@ -175,7 +175,7 @@ class Transpiler:
 
 
         # Python's range second param in non-inclusive, but IB spec is inclusive, so need extra handling here (hence the func)
-        code = re.sub("loop ([A-Z]+) from ([0-9]+) to ([A-Z0-9-]+)", self.increment_second_range_param, code)
+        code = re.sub("loop ([A-Z]+) from ([A-Z0-9_]+) to ([A-Z0-9_]+)", self.increment_second_range_param, code)
 
         # standardize cases; TODO: What if user enters falSe?
         code = re.sub(r"\b((NOT)|(AND)|(OR))\b", lambda m: m.group(1).lower(), code)
