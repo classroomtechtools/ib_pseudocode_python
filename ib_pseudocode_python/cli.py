@@ -155,6 +155,9 @@ class Transpiler:
         # change any if statements with "then"
         code = re.sub(r"\bif (.*) then", r"if \1:", code)
 
+        # change any func statements with def ..() :
+        code = re.sub(r"\bfunc\b(.*)", r"def \1:", code)
+
         # just remove any "end" statements
         code = re.sub(r"\bend .*", "", code)
 
