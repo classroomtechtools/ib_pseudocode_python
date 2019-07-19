@@ -141,7 +141,10 @@ class Transpiler:
         code = re.sub(r'//.*', '', code)
 
         # change output keyword to output function (which is exec as print statement)
-        code = re.sub(r"\boutput (.*)", r"output(\1)", code)
+        code = re.sub(r"\boutput (.*)", r"print(\1)", code)
+
+        # change out to output with end=""
+        code = re.sub(r"\bout (.*)", r'print(\1, end="")', code)
 
         # change comparison with one = to ==, keeping "then" (removed in next)
         code = re.sub("if (.*) ={1} (.*)", self.if_statement, code)
@@ -156,7 +159,7 @@ class Transpiler:
         code = re.sub(r"\bif (.*) then", r"if \1:", code)
 
         # change any func statements with def ..() :
-        code = re.sub(r"\bfunc\b(.*)", r"def \1:", code)
+        code = re.sub(r"\bsub\b(.*)", r"def \1:", code)
 
         # just remove any "end" statements
         code = re.sub(r"\bend .*", "", code)
@@ -208,7 +211,6 @@ class Transpiler:
             'Array': ib_specification_glue_code.Array,
             'Stack': ib_specification_glue_code.Stack,
             'Collection': ib_specification_glue_code.Collection,
-            'output': ib_specification_glue_code.output,
             'Queue': ib_specification_glue_code.Queue,
         }
 

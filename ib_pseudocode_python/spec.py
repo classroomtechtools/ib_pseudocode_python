@@ -8,9 +8,9 @@ import collections
 import inspect
 import click
 
-def output(*args):
+def output(*args, **kwargs):
     """ Convert arguments to strings and print to stdout """
-    print("".join([str(a) for a in args]))
+    print("".join([str(a) for a in args]), **kwargs)
 
 
 class DataAssist:
@@ -30,6 +30,12 @@ class DataAssist:
         func = getattr(obj, attr)
         for _ in range(num):
             func(random.randint(min, max))
+        return obj
+
+    def from_x_characters(self, obj, attr, num, min='A', max='Z'):
+        func = getattr(obj, attr)
+        for _ in range(num):
+            func(chr(random.randint(ord(min), ord(max))))
         return obj
 
 data_assist = DataAssist()
@@ -108,7 +114,11 @@ class Collection:
 
     def getNext(self):
         self._index += 1
-        return self._list[self._index]
+        try:
+            value = self._list[self._index]
+        except IndexError:
+            value = None
+        return value
 
     def __getitem__(self, index):
         return self._list[index]
@@ -184,3 +194,8 @@ class Queue(collections.deque):
     def from_x_integers(cls, how_many, min=1, max=1000):
         me = cls()
         return data_assist.from_x_integers(me, 'enqueue', how_many, min=min, max=max)
+
+    @classmethod
+    def from_x_characters(cls, how_many, min='A', max='Z'):
+        me = cls()
+        return data_assist.from_x_characters(me, 'enqueue', how_many, min=min, max=max)
