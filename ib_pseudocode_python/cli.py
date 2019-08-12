@@ -176,9 +176,8 @@ class Transpiler:
         # change loop until <expr>
         code = re.sub(r'\bloop until (.*)', r'while not \1:', code)
 
-
         # Python's range second param in non-inclusive, but IB spec is inclusive, so need extra handling here (hence the func)
-        code = re.sub("loop ([A-Z]+) from ([A-Z0-9_]+) to ([A-Z0-9_]+)", self.increment_second_range_param, code)
+        code = re.sub("loop ([A-Z]+) from (.+) to (.+)", self.increment_second_range_param, code)
 
         # standardize cases; TODO: What if user enters falSe?
         code = re.sub(r"\b((NOT)|(AND)|(OR))\b", lambda m: m.group(1).lower(), code)
