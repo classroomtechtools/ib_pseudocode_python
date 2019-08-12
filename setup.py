@@ -1,7 +1,7 @@
 from distutils.core import setup
 setup(
     name="IB DP Pseudocode to Python",
-    version=".5",
+    version=".7",
     description="Write pseudocode, run it as Python and see results",
     author="Adam Morris",
     author_email="classroomtechtools.ctt@gmail.com",
