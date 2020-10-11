@@ -6,11 +6,11 @@ Write pseudocode in repl.it. Execute it as Python. Learn Paper 1, learn computat
 
 ### Executing code
 
-- Navigate to the [base repl](https://repl.it/@adammorris/InputPseudocode).
-- Create a new file called "new" (this will also fork the repl and make it yours)
-- Enter pseudocode (for example `output "Hello World"`)
-- In the interpreter, enter `execute('new')` and the code in the file `new.pseudo` executes
-- In the interpreter, enter `transpile('new')` and it outputs the code that would be executed
+- Launch a [GitPod workspace](https://gitpod.io/#https://github.com/classroomtechtools/ib_pseudocode_python) by clicking there
+- Once you're reached the workspace, type `nano new.pseudo` in the terminal
+- Enter pseudocode (for example `output "Hello World"`), save and exit
+- Type `pseudo execute new` and the code in the file `new.pseudo` executes
+- In the interpreter, enter `pseudo transpile new` and it outputs the python code that gets executed
 
 ### Why use it
 
