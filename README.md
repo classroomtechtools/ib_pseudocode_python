@@ -4,9 +4,9 @@ Write pseudocode in repl.it. Execute it as Python. Learn Paper 1, learn computat
 
 ## Quickstart
 
-### Executing code
+### Execute IB Pseudocode in a GitPod Workspace
 
-- Launch a [GitPod workspace](https://gitpod.io/#https://github.com/classroomtechtools/ib_pseudocode_python) by clicking there
+- Launch a [GitPod workspace](https://gitpod.io/#https://github.com/classroomtechtools/ib_pseudocode_python)
 - Once you're reached the workspace, type `nano new.pseudo` in the terminal
 - Enter pseudocode (for example `output "Hello World"`), save and exit
 - Type `pseudo execute new` and the code in the file `new.pseudo` executes
