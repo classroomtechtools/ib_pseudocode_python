@@ -7,10 +7,11 @@ Write pseudocode in repl.it. Execute it as Python. Learn Paper 1, learn computat
 ### Execute IB Pseudocode in a GitPod Workspace
 
 - Launch a [GitPod workspace](https://gitpod.io/#https://github.com/classroomtechtools/ib_pseudocode_python)
-- Once you're reached the workspace, type `nano new.pseudo` in the terminal
+- Once you're reached the workspace, add a new file `new.pseudo`
 - Enter pseudocode (for example `output "Hello World"`), save and exit
 - Type `pseudo execute new` and the code in the file `new.pseudo` executes
 - In the interpreter, enter `pseudo transpile new` and it outputs the python code that gets executed
+- Execute multiple files, it concats them for you
 
 ### Why use it
 
@@ -88,17 +89,16 @@ loop while GIVENANGELS.hasNext()
 In the actual exam, you wouldn't need to write the first line.
 
 
-
 ### Convenience Functions
 
 All four data structures have the following convenience functions to easily populate a data structure.
 
-Where `Class` below is either `List`, `Collection`, `Stack` or `Queue`:
+Where `Class` below is either `Array`, `Collection`, `Stack` or `Queue`:
 
 ```
-Class.from_file(name)
-Class.from_x_integers(how_many, min=1, max=100)
-Class.from_array(list)
+item = Class.from_file(name)
+item = Class.from_x_integers(how_many, min=1, max=100)
+item = Class.from_array(list)
 ```
 
 ## Implementation Details
@@ -108,8 +108,6 @@ Class.from_array(list)
 If you are curious how this all works:
 
 - The repo which implements `transpile`, `execute`, and `run` is written as a command line utility, using the great [click package](https://click.palletsprojects.com/en/7.x/)
-- The code hosted on repl.it downloads and installs the repo from github, along with some associated housekeeping
-- The `go` function on the repl executes the command line utility through [Python packaging](https://packaging.python.org/specifications/entry-points/) `console_scripts` entry point
 - The transpiling itself is just a bunch of regexp with some defined classes
 - The excution occurs with Python's `exec` function, where for the globals parameter includes a link to the four classes that represent the four data structures (which allows us to initialize and interact with such objects)
 

@@ -115,27 +115,34 @@ class Transpiler:
         """
 
         """
-        try:
-            path = pathlib.Path(file)
+        if isinstance(file, tuple):
+            files = file
+        else:
+            files = [file]
+        codebase = []
+        for f_ in files:
+            try:
+                path = pathlib.Path(f_)
 
-            if not path.exists():
-                path = path.with_suffix('.pseudo')
+                if not path.exists():
+                    path = path.with_suffix('.pseudo')
 
-            if not path.exists():
-                raise FileNotFoundError(f"You need to create a file called {path}")
+                if not path.exists():
+                    raise FileNotFoundError(f"You need to create a file called {path}")
 
-            with open(path) as source:
-                # readin from source
-                pseudocode = source.read()
+                with open(path) as source:
+                    # readin from source
+                    pc = source.read()
 
-        except TypeError:
-            # probably a StringIO or file object
-            pseudocode = file.read()
+            except TypeError:
+                # probably a StringIO or file object
+                pc = f_.read()
 
-        code = pseudocode[:]  # copy
+            codebase.append(pc)
 
+        pseudocode = '\n'.join(codebase)
         # change tabs to four spaces
-        code = code.replace(r'\t', "    ")
+        code = pseudocode.replace(r'\t', "    ")
 
         # remove comments: TODO What if "//"" in string?
         code = re.sub(r'//.*', '', code)
@@ -268,6 +275,7 @@ class Transpiler:
             detail = err.args[0]
             cl, exc, tb = sys.exc_info()
 
+            # TODO: line_number in multi-files is incorrect
             line_number = traceback.extract_tb(tb)[-1][1]
             pseudo_line = pseudocode_lines[line_number-1].strip()
             transpiled_line = code_lines[line_number-1].strip()
@@ -324,7 +332,7 @@ def interface(app):
 
 
 @cli.command('transpile', cls=CliCommandRepl if on_repl else None)
-@add_argument('file')
+@add_argument('file', nargs=-1)
 @pass_pseudo
 def transpile(app, file):
     """
@@ -335,7 +343,7 @@ def transpile(app, file):
 
 
 @cli.command('execute', cls=CliCommandRepl if on_repl else None)
-@add_argument('file', default=None)
+@add_argument('file', default=None, nargs=-1)
 @pass_pseudo
 def execute(app, *args, file=None, **kwargs):
     """

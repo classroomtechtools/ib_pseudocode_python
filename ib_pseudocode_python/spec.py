@@ -50,8 +50,8 @@ class Array:
     We compensate by extending the list as it grows
     """
 
-    def __init__(self):
-        self._list = []
+    def __init__(self, list_=None):
+        self._list = list_ or []
 
     def __getitem__(self, index):
         try:
@@ -74,8 +74,7 @@ class Array:
 
     @classmethod
     def from_list(cls, arr):
-        me = cls()
-        me._list = arr
+        me = cls(arr)
         return me
 
     @classmethod
