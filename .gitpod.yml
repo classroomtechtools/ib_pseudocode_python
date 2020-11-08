@@ -1,4 +1,4 @@
 # Command to start on workspace startup (optional)
 tasks:
-  - init: pip install .
+  - init: pip install -e .
     command: pseudo --help
