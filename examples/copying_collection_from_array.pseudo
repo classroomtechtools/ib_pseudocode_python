@@ -1,0 +1,20 @@
+NAMES = Collection.from_file('data/names')
+LIST = Array()
+
+COUNT = 0 // number of names currently in LIST
+loop while NAMES.hasNext()
+    DATA = NAMES.getNext()
+    FOUND = false
+    loop POS from 0 to COUNT-1
+        if DATA = LIST[POS] then
+            FOUND = true
+        end if
+    end loop
+
+    if FOUND = false then
+        LIST[COUNT] = DATA
+        COUNT = COUNT + 1
+    end if
+end loop
+
+output LIST

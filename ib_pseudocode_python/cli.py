@@ -87,7 +87,7 @@ class Transpiler:
 
     @staticmethod
     def if_statement(match):
-        return re.sub(r'={1}', r'==', match.group(0))
+        return re.sub(r'[^!<>]={1}', r'==', match.group(0))
 
     @staticmethod
     def increment_second_range_param(match):
@@ -129,16 +129,21 @@ class Transpiler:
 
                 if not path.exists():
                     raise FileNotFoundError(f"You need to create a file called {path}")
-
-                with open(path) as source:
-                    # readin from source
-                    pc = source.read()
+                
+                try:
+                    with open(path) as source:
+                        # readin from source
+                        pc = source.read()
+                except IsADirectoryError:
+                    # just skip directories
+                    pc = None
 
             except TypeError:
                 # probably a StringIO or file object
                 pc = f_.read()
 
-            codebase.append(pc)
+            if pc is not None:
+                codebase.append(pc)
 
         pseudocode = '\n'.join(codebase)
         # change tabs to four spaces

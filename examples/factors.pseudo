@@ -1,0 +1,22 @@
+NUM = 10
+F = 1
+FACTORS = 0
+
+loop until F*F > NUM 
+    if NUM mod F = 0 then
+        D = NUM div F
+        output NUM , " = " , F , "*" , D
+
+        if F = 1 then
+            FACTORS = FACTORS + 0
+        else if F = D then
+            FACTORS = FACTORS + 1
+        else
+            FACTORS = FACTORS + 2
+        end if
+    end if
+    
+    F = F + 1
+end loop
+
+output NUM , " has " , FACTORS , " factors "
